@@ -1,0 +1,49 @@
+service: aws-node-http-api-project
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-west-2 
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:us-west-2:593117801740:table/UsersTable
+
+functions:
+  addUser:
+    handler: src/handler/addUser.handler
+    events:
+      - httpApi:
+          path: /addUser
+          method: post
+  getUser:
+    handler: src/handler/getUser.handler
+    events:
+      - httpApi:
+          path: /getUser/{id}
+          method: get
+  getUsers:
+    handler: src/handler/getUsers.handler
+    events:
+      - httpApi:
+          path: /getUsers
+          method: get
+  updateUser:
+    handler: src/handler/updateUser.handler
+    events:
+      - httpApi:
+          path: /updateUser/{id}
+          method: put
+  deleteUser:
+    handler: src/handler/deleteUser.handler
+    events:
+      - httpApi:
+          path: /deleteUser/{id}
+          method: delete
+
+resources:
+  #DynamoDB
+  - ${file(resource/dynamo/usersTable.yml)}
